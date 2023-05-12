@@ -31,3 +31,5 @@ alleryContainerEl.addEventListener('click', event => {
 });
 
 console.log(galleryItems);
+
+//checking
