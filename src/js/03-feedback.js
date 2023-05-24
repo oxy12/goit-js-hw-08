@@ -2,38 +2,30 @@ import '../css/common.css';
 import '../css/03-feedback.css';
 import throttle from 'lodash.throttle';
 
-const STORAGE_KEY = 'feedback-form-state';
-const refs = {
-  form: document.querySelector('.feedback-form'),
-  textarea: document.querySelector('.feedback-form textarea'),
-  input: document.querySelector('input'),
-};
-const formData = {};
-
-populateTextarea();
-
-refs.form.addEventListener('input', throttle(onTextareaInput, 500));
-
-refs.form.addEventListener('submit', e => {
-  e.preventDefault();
-  e.currentTarget.reset();
-  const objData = JSON.parse(localStorage.getItem(STORAGE_KEY));
-  localStorage.removeItem(STORAGE_KEY);
-});
-
-function onTextareaInput(e) {
-  formData[e.target.name] = e.target.value;
-  const stringifiedData = JSON.stringify(formData);
-  localStorage.setItem(STORAGE_KEY, stringifiedData);
+const LOCAL_KEY = 'feedback-form-state';
+form = document.querySelector('.feedback-form');
+form.addEventListener('input', throttle(onInputData, 500));
+form.addEventListener('submit', onFormSubmit);
+let dataForm = JSON.parse(localStorage.getItem(LOCAL_KEY)) || {};
+const { email, message } = form.elements;
+reloadPage();
+function onInputData(e) {
+  dataForm = { email: email.value, message: message.value };
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(dataForm));
 }
-
-function populateTextarea() {
-  const savedMessage = JSON.parse(localStorage.getItem(STORAGE_KEY));
-
-  if (savedMessage === null) {
-    //console.log(savedMessage);
-    return;
+function reloadPage() {
+  if (dataForm) {
+    email.value = dataForm.email || '';
+    message.value = dataForm.message || '';
   }
-  refs.textarea.value = savedMessage['message'] || '';
-  refs.input.value = savedMessage['email'] || '';
+}
+function onFormSubmit(e) {
+  e.preventDefault();
+  console.log({ email: email.value, message: message.value });
+  if (email.value === '' || message.value === '') {
+    return alert('Please fill in all the fields!');
+  }
+  localStorage.removeItem(LOCAL_KEY);
+  e.currentTarget.reset();
+  dataForm = {};
 }
