@@ -3,7 +3,7 @@ import '../css/03-feedback.css';
 import throttle from 'lodash.throttle';
 
 const LOCAL_KEY = 'feedback-form-state';
-form = document.querySelector('.feedback-form');
+form = document.querySelector('.feedback-form-state');
 form.addEventListener('input', throttle(onInputData, 500));
 form.addEventListener('submit', onFormSubmit);
 let dataForm = JSON.parse(localStorage.getItem(LOCAL_KEY)) || {};
@@ -29,3 +29,4 @@ function onFormSubmit(e) {
   e.currentTarget.reset();
   dataForm = {};
 }
+
